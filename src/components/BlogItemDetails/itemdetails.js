@@ -1,27 +1,32 @@
-import { Component } from "react";
-
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 import "./itemdetails.css";
 
-const blogData = {
-  title: "Blog Name",
-  imageUrl: "https://assets.ccbp.in/frontend/react-js/placeholder-3-img.png",
-  avatarUrl: "https://assets.ccbp.in/frontend/react-js/avatar-img.png",
-  author: "Author Name",
-  content:
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-};
+const BlogItemDetails = () => {
+  const [blogsData, updateBlogDate] = useState([]);
+  const [isLoading, updateIsLoading] = useState(true);
+  const { id } = useParams();
 
-class BlogItemDetails extends Component {
-  componentDidMount() {
-    this.getBlogItemDetails();
-  }
+  useEffect(() => {
+    const getBlogItemDetails = async (id) => {
+      const response = await fetch(`https://apis.ccbp.in/blogs/${id}`);
+      const data = await response.json();
+      const updatedData = {
+        title: data.title,
+        imageUrl: data.image_url,
+        content: data.content,
+        avatarUrl: data.avatar_url,
+        author: data.author,
+      };
+      updateBlogDate(updatedData);
+      updateIsLoading(false);
+    };
+    getBlogItemDetails(id);
+  });
 
-  getBlogItemDetails = () => {
-    console.log(this.props);
-  };
-
-  renderBlogItemDetails = () => {
-    const { title, imageUrl, content, avatarUrl, author } = blogData;
+  const renderBlogItemDetails = () => {
+    const { title, imageUrl, content, avatarUrl, author } = blogsData;
     return (
       <div className="blog-info">
         <h2 className="blog-details-title">{title}</h2>
@@ -37,9 +42,24 @@ class BlogItemDetails extends Component {
     );
   };
 
-  render() {
-    return <div className="blog-container">{this.renderBlogItemDetails()}</div>;
-  }
-}
+  return (
+    <div className="blog-list-container">
+      {isLoading ? (
+        <TailSpin
+          height="80"
+          width="80"
+          color="#4fa94d"
+          ariaLabel="tail-spin-loading"
+          radius="1"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+        />
+      ) : (
+        <div className="blog-container">{renderBlogItemDetails()}</div>
+      )}
+    </div>
+  );
+};
 
 export default BlogItemDetails;

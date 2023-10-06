@@ -14,7 +14,7 @@ class App extends Component {
         <Header />
         <Routes>
           <Route exact path="/" Component={BlogsList} />
-          <Route exact path="/blogs/:id" Component={BlogItemDetails} />
+          <Route exact path="/blogs/:id" element={<BlogItemDetails />} />
           <Route exact path="/about" Component={About} />
           <Route exact path="/contact" Component={Contact} />
           <Route exact path="/*" Component={NotFound} />
